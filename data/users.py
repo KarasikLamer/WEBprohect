@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
-class Login(SqlAlchemyBase, UserMixin, SerializerMixin):
+class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -16,6 +16,11 @@ class Login(SqlAlchemyBase, UserMixin, SerializerMixin):
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=False)
     phone = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=True)
     second_email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=True)
+
+    received_messages = orm.relationship("Message", back_populates="receiver")
+    sent_messages = orm.relationship("Message", back_populates="sender")
+
+    admin = orm.relationship("Admin", back_populates="user")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
